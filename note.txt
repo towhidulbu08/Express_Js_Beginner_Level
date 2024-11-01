@@ -1,0 +1,60 @@
+=>express()
+Creates an Express application. The express() function is a top-level function exported by the express module.
+
+var express = require('express')
+var app = express()
+
+=>Methods:
+
+i.express.json([options]):
+This middleware is available in Express v4.16.0 onwards.
+This is a built-in middleware function in Express. It parses incoming requests with JSON payloads and is based on body-parser.
+
+
+ii.express.raw([options]):
+This middleware is available in Express v4.17.0 onwards.
+This is a built-in middleware function in Express. It parses incoming request payloads into a Buffer and is based on body-parser.
+
+iii.express.text([options])
+This middleware is available in Express v4.17.0 onwards.
+This is a built-in middleware function in Express. It parses incoming request payloads into a string and is based on body-parser.
+
+iv.express.urlencoded([options]):
+This middleware is available in Express v4.16.0 onwards.
+This is a built-in middleware function in Express. It parses incoming requests with urlencoded payloads and is based on body-parser.
+
+v.express.static(root, [options]):
+This is a built-in middleware function in Express. It serves static files and is based on serve-static.
+The root argument specifies the root directory from which to serve static assets. The function determines the file to serve by combining req.url with the provided root directory. When a file is not found, instead of sending a 404 response, it calls next() to move on to the next middleware, allowing for stacking and fall-backs.
+
+vi.express.Router([options]):
+Creates a new router object.
+var router = express.Router([options])
+The optional options parameter specifies the behavior of the router.
+
+
+=>Router:
+A router object is an instance of middleware and routes. You can think of it as a “mini-application,” capable only of performing middleware and routing functions. Every Express application has a built-in app router.
+
+A router behaves like middleware itself, so you can use it as an argument to app.use() or as the argument to another router’s use() method.
+
+The top-level express object has a Router() method that creates a new router object.
+
+Once you’ve created a router object, you can add middleware and HTTP method routes (such as get, put, post, and so on) to it just like an application. For example:
+
+// invoked for any requests passed to this router
+router.use(function (req, res, next) {
+  // .. some logic here .. like any other middleware
+  next()
+})
+
+// will handle any request that ends in /events
+// depends on where the router is "use()'d"
+router.get('/events', function (req, res, next) {
+  // ..
+})
+You can then use a router for a particular root URL in this way separating your routes into files or even mini-apps.
+
+// only requests to /calendar/* will be sent to our "router"
+app.use('/calendar', router)
+Keep in mind that any middleware applied to a router will run for all requests on that router’s path, even those that aren’t part of the router.
