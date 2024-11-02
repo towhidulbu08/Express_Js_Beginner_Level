@@ -58,3 +58,120 @@ You can then use a router for a particular root URL in this way separating your 
 // only requests to /calendar/* will be sent to our "router"
 app.use('/calendar', router)
 Keep in mind that any middleware applied to a router will run for all requests on that router’s path, even those that aren’t part of the router.
+
+=> Application:
+The app object conventionally denotes the Express application. Create it by calling the top-level express() function exported by the Express module:
+
+const express = require('express')
+const app = express()
+
+app.get('/', (req, res) => {
+  res.send('hello world')
+})
+
+app.listen(3000)
+
+The app object has methods for:
+
+i. HTTP requests; see for example, app.METHOD and app.param.
+ii.Configuring middleware; see app.route.
+iii.Rendering HTML views; see app.render.
+iv.Registering a template engine; see app.engine.
+
+=>Properties:
+i.app.locals
+The app.locals object has properties that are local variables within the application, and will be available in templates rendered with res.render.
+
+console.dir(app.locals.title)
+// => 'My App'
+
+console.dir(app.locals.email)
+// => 'me@myapp.com'
+Once set, the value of app.locals properties persist throughout the life of the application, in contrast with res.locals properties that are valid only for the lifetime of the request.
+
+You can access local variables in templates rendered within the application. This is useful for providing helper functions to templates, as well as application-level data. Local variables are available in middleware via req.app.locals (see req.app)
+
+app.locals.title = 'My App'
+app.locals.strftime = require('strftime')
+app.locals.email = 'me@myapp.com'
+
+ii.app.mountpath
+The app.mountpath property contains one or more path patterns on which a sub-app was mounted.
+
+A sub-app is an instance of express that may be used for handling the request to a route.
+
+const express = require('express')
+
+const app = express() // the main app
+const admin = express() // the sub app
+
+admin.get('/', (req, res) => {
+  console.log(admin.mountpath) // /admin
+  res.send('Admin Homepage')
+})
+
+app.use('/admin', admin) // mount the sub app
+It is similar to the baseUrl property of the req object, except req.baseUrl returns the matched URL path, instead of the matched patterns.
+
+If a sub-app is mounted on multiple path patterns, app.mountpath returns the list of patterns it is mounted on, as shown in the following example.
+
+const admin = express()
+
+admin.get('/', (req, res) => {
+  console.log(admin.mountpath) // [ '/adm*n', '/manager' ]
+  res.send('Admin Homepage')
+})
+
+const secret = express()
+secret.get('/', (req, res) => {
+  console.log(secret.mountpath) // /secr*t
+  res.send('Admin Secret')
+})
+
+admin.use('/secr*t', secret) // load the 'secret' router on '/secr*t', on the 'admin' sub app
+app.use(['/adm*n', '/manager'], admin) // load the 'admin' router on '/adm*n' and '/manager', on the parent app
+
+=>Events:
+
+mount:
+app.on('mount', callback(parent))
+The mount event is fired on a sub-app, when it is mounted on a parent app. The parent app is passed to the callback function.
+
+=>NOTE:
+Sub-apps will:
+
+i.Not inherit the value of settings that have a default value. You must set the value in the sub-app.
+ii.Inherit the value of settings with no default value.
+For details, see Application settings.
+
+
+const admin = express()
+
+admin.on('mount', (parent) => {
+  console.log('Admin Mounted')
+  console.log(parent) // refers to the parent app
+})
+
+admin.get('/', (req, res) => {
+  res.send('Admin Homepage')
+})
+
+app.use('/admin', admin)
+
+=>Methods:
+
+i.app.all():
+ii.app.disable():
+iii.app.enable():
+iv.app.disabled():
+v.app.enabled:
+vi.app.get():
+vii.app.get():
+viii.app.set():
+ix.app.listen:
+x.app.METHOD():
+xi.app.param():
+xii.app.route():
+xiii.app.path():
+
+

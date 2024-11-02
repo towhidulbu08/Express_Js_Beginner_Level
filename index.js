@@ -1,15 +1,18 @@
 const express = require("express");
 const app = express();
+app.set("view engine", "ejs");
 
-const router = express.Router({ caseSensitive: true });
-app.use(router);
-router.get("/about", (req, res) => {
-  res.send("This is Home Page ");
-});
-router.post("/", (req, res) => {
-  console.log(req.body);
-  res.send("This is Home Page With Post Req");
-});
+app
+  .route("/user/admin")
+  .get((req, res) => {
+    res.render("pages/about");
+  })
+  .post((req, res) => {
+    res.send("welcome to page post");
+  })
+  .put((req, res) => {
+    res.send("welcome to page put");
+  });
 app.listen(3000, () => {
   console.log("listening on port 3000");
 });
