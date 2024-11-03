@@ -175,3 +175,93 @@ xii.app.route():
 xiii.app.path():
 
 
+=>Template Engine:
+A template engine is a tool that allows you to create HTML views dynamically by combining templates with data. Instead of writing static HTML, you use placeholders in a template file, and the template engine replaces these placeholders with real data before sending the final HTML to the client.
+
+Here’s how it works:
+
+Templates: These are files (like .ejs, .pug, .hbs) that contain a mix of HTML and placeholders for data. The placeholders can represent variables, loops, conditions, etc.
+
+Data: This is the dynamic content that will be injected into the placeholders in the template. For example, user names, product details, or blog post content.
+
+Rendering: The template engine takes the template and the data, combines them, and generates the final HTML output. This HTML is then sent to the client’s browser.
+
+Key Benefits
+Reusability: You can create templates for common layouts (like headers, footers, and navigation) and reuse them across multiple pages.
+Separation of Concerns: Keeps your application logic (in JavaScript) separate from the presentation layer (HTML).
+Easier Maintenance: Updating the layout or content in one template automatically applies to all pages that use that template.
+Example with EJS
+In EJS, you might have a template like this:
+
+html
+Copy code
+<h1>Welcome, <%= userName %>!</h1>
+<ul>
+  <% users.forEach(user => { %>
+    <li><%= user.name %></li>
+  <% }); %>
+</ul>
+Here:
+
+<%= %> is used to output variables (like userName).
+<% %> is used for logic, like looping through users and rendering each user’s name.
+When the template engine receives data like { userName: "Alice", users: [{ name: "Bob" }, { name: "Charlie" }] }, it will generate the final HTML:
+
+html
+Copy code
+<h1>Welcome, Alice!</h1>
+<ul>
+  <li>Bob</li>
+  <li>Charlie</li>
+</ul>
+Popular Template Engines
+EJS (Embedded JavaScript): Simple, with syntax close to JavaScript.
+Pug: Minimal syntax, uses indentation rather than brackets.
+Handlebars: Logic-less templates, great for simple data binding.
+Would you like more examples on how to integrate a template engine in Express.js?
+
+=>Request Object:
+
+The req object represents the HTTP request and has properties for the request query string, parameters, body, HTTP headers, and so on. In this documentation and by convention, the object is always referred to as req (and the HTTP response is res) but its actual name is determined by the parameters to the callback function in which you’re working.
+
+For example:
+
+app.get('/user/:id', (req, res) => {
+  res.send(`user ${req.params.id}`)
+})
+But you could just as well have:
+
+app.get('/user/:id', (request, response) => {
+  response.send(`user ${request.params.id}`)
+})
+The req object is an enhanced version of Node’s own request object and supports all built-in fields and methods.
+
+=>Properties:
+i.req.baseUrl:
+ii.req.originalUrl:
+iii.req.path:
+iv.req.url:
+v.req.hostname:
+vi.req.ip:
+vii.req.method:
+viii.req.protocol:
+ix.req.params:
+x.req.query:
+xi.req.body:
+xii.req.cookies:
+xiii.req.signedCookies:
+xiv.req.secure:
+xv.req.app:
+xvi.req.route:
+
+=>Methods:
+
+i.req.accepts():
+ii.req.get():
+iii.req.param(): deprecated
+
+
+
+ 
+
+
