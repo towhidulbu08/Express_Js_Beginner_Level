@@ -261,6 +261,41 @@ ii.req.get():
 iii.req.param(): deprecated
 
 
+=>Response Object:
+The res object represents the HTTP response that an Express app sends when it gets an HTTP request.
+
+In this documentation and by convention, the object is always referred to as res (and the HTTP request is req) but its actual name is determined by the parameters to the callback function in which you’re working.
+
+For example:
+
+app.get('/user/:id', (req, res) => {
+  res.send(`user ${req.params.id}`)
+})
+But you could just as well have:
+
+app.get('/user/:id', (request, response) => {
+  response.send(`user ${request.params.id}`)
+})
+The res object is an enhanced version of Node’s own response object and supports all built-in fields and methods.
+
+=>Properties:
+
+i.res.app:
+ii.res.headerSent:
+iii.res.locals:
+
+=>Methods:
+i.res.json():
+ii.res.end():
+iii.res.status():
+iv.res.statusCode():
+v.res.format():
+vi.res.send():
+viii.res.location():
+ix.res.cookies():
+x.res.redirect():
+xi.res.set():
+x.res.get():
 
  
 
