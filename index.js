@@ -1,71 +1,88 @@
 const express = require("express");
 const app = express();
-const fs = require("fs");
+const path = require("path");
 
-// Error handling for asynchronous code:
+const multer = require("multer");
 
-app.get("/", [
-  (req, res, next) => {
-    fs.readFile("/file-does-not-exit", "utf-8", (err, data) => {
-      console.log(data);
-      next(err);
-    });
+//file upload folder
+
+const Uploads_Folder = "./uploads/";
+
+// define the storage
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, Uploads_Folder);
   },
-  (req, res, next) => {
-    console.log(data.property);
+  filename: (req, file, cb) => {
+    const fileExt = path.extname(file.originalname);
+    const filename =
+      file.originalname
+        .replace(fileExt, "")
+        .toLowerCase()
+        .split(" ")
+        .join("-") +
+      "-" +
+      Date.now();
+    cb(null, filename + fileExt);
   },
-]);
-
-app.use((req, res, next) => {
-  console.log("I am not called");
-  next();
 });
-// custom error handling
-app.use((err, req, res, next) => {
-  if (res.headersSent) {
-    next("There was a problem ");
-  } else {
-    if (err.message) {
-      res.status(500).send(err.message);
+
+//prepare the final multer upload object
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 1000000, //1Mb
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.fieldname === "avatar") {
+      if (
+        file.mimetype === "image/jpeg" ||
+        file.mimetype === "image/jpg" ||
+        file.mimetype === "image/png"
+      ) {
+        cb(null, true);
+      } else {
+        cb(new Error("only .jpg,.jpeg,.png format are allowed"));
+      }
+    } else if (file.fieldname === "doc") {
+      if (file.mimetype === "application/pdf") {
+        cb(null, true);
+      } else {
+        cb(new Error("only .pdf file is allowed"));
+      }
     } else {
-      res.status(500).send("There was an error");
+      cb(new Error("There was an error"));
     }
+  },
+});
+
+//application route
+app.post(
+  "/",
+  upload.fields([
+    { name: "avatar", maxCount: 1 },
+    { name: "doc", maxCount: 1 },
+  ]),
+  (req, res) => {
+    console.log(req.files);
+    res.send("Hello World");
+  }
+);
+
+//default error handler
+app.use((err, req, res, next) => {
+  if (err) {
+    if (err instanceof multer.MulterError) {
+      res.status(500).send("There was an upload error");
+    } else {
+      res.status(500).send(err.message);
+    }
+  } else {
+    res.send("success");
   }
 });
-
-//Error Handling For Synchronous Code:
-
-// app.get("/", (req, res) => {
-//   for (let i = 0; i <= 10; i++) {
-//     if (i === 5) {
-//       next("There was an error");
-//     } else {
-//       res.write("a");
-//     }
-//   }
-//   res.end();
-// });
-// //404 error handler
-// app.use((req, res, next) => {
-//   next("Requested url was not found");
-// });
-// app.use((err, req, res, next) => {
-//   if (res.headersSent) {
-//     next("There was a problem ");
-//   } else {
-//     if (err.message) {
-//       res.status(500).send(err.message);
-//     } else {
-//       res.status(500).send("There was an error");
-//     }
-//   }
-// });
-
-// //invisible default error handler
-
-// app.use((err, req, res, next) => {
-//   //  handle error here
-// });
 
 app.listen(3000, () => {
   console.log("listening on port 3000");
